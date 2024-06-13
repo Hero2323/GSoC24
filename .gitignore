@@ -1,0 +1,5 @@
+logs
+logs/*
+/*__pychache__
+gsoc24env
+gsoc24env/*

@@ -1,0 +1,2 @@
+1. Maybe use a scanner such as nomos first to check quickly if the file contains a license? depends on how reliable they are in terms of recall
+2. Context window is an issue no matter the model at this size. - Although the models can be fine-tuned to have a much larger context window, I have never tried this before.

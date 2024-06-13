@@ -1,0 +1,212 @@
+,file path,scan results,concluded results,response
+0,pytorch-main/torch/csrc/utils/pythoncapi_compat.h,0BSD BSD,,"**Licenses = [ 'Zero Clause BSD (0BSD)' ]**
+**SPDX-IDs = [ 'SPDX-License-Identifier: 0BSD' ]**"
+1,pytorch-main/torch/utils/viz/_cycles.py,Apache-2.0,,"**Licenses = [Apache License, Version 2.0]**
+**SPDX-IDs = [SPDX-License-Identifier: Apache-2.0]**
+
+**Evidence:**
+
+""Licensed under the Apache License, Version 2.0 (the ""License""); you may not use this file except in compliance with the License."""
+2,pytorch-main/torch/distributions/lkj_cholesky.py,Apache-2.0,,"**Licenses = [Apache-2.0]**
+**SPDX-IDs = [Apache-2.0]**"
+3,pytorch-main/NOTICE,Apache-2.0 BSD-3-Clause BSL-1.0,,"**Licenses:**
+
+- Licenses = [Early BSD License, Caffe's BSD License, Caffe2's Apache License, Cephes's 3-Clause BSD License, SciPy's 3-Clause BSD License, Boost's 1.0 Software License, PILLOW-SIMD Software License]
+
+- SPDF-IDs = [
+    ""BSD-3-Clause"",
+    ""Apache-2.0"",
+    ""MIT"",
+    ""BSD-3-Clause"",
+    ""BSD-3-Clause"",
+    ""Apache-2.0"",
+    ""HPND""
+]"
+4,pytorch-main/torch/utils/model_dump/htm.mjs,Apache-possibility,Apache-possibility,"**Licenses = [Apache License]**
+**SPDX-IDs = [Apache-2.0]**
+
+**Evidence:**
+
+The provided text includes the following statement at the end:
+
+```
+// HTM, Apache License
+```
+
+This indicates that the code is licensed under the Apache License."
+5,pytorch-main/torch/distributed/pipeline/sync/skip/namespace.py,BSD,,"**Licenses = [BSD License]**
+
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree."""
+6,pytorch-main/torch/distributed/pipeline/sync/_balance/blockpartition.py,BSD,,"**Licenses = [BSD License]**
+
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree."""
+7,pytorch-main/torch/distributed/pipeline/sync/checkpoint.py,BSD,,"**Licenses = [BSD License]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree."""
+8,pytorch-main/setup.py,BSD,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**Explanation:**
+
+The provided text does not contain any explicit software licenses. Therefore, the results of the analysis are empty lists for both licenses and SPDX identifiers."
+9,pytorch-main/torch/distributed/pipeline/sync/skip/__init__.py,BSD,,"**Licenses = [BSD License]**
+
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree."""
+10,pytorch-main/torch/distributed/pipeline/sync/LICENSE,BSD-3-Clause,,"**Licenses = [MIT License]**
+
+**SPDX-IDs = [SPDX-License-Identifier: MIT]**"
+11,pytorch-main/torch/fx/experimental/unification/LICENSE.txt,BSD-3-Clause,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**Conclusion:**
+
+The provided text does not contain any identified software licenses."
+12,pytorch-main/LICENSE,BSD-3-Clause,,"**Licenses = [MIT License]**
+**SPDX-IDs = [SPDX-License-Identifier: MIT]**
+
+**Explanation:**
+
+The provided text contains the MIT License, which is identified by the SPDX-License-Identifier: MIT. The license text is clearly stated in the section titled ""Redistribution and use in source and binary forms."""
+13,pytorch-main/README.md,BSD-possibility,,"**Licenses:**
+
+- **Licenses:** [MIT License](SPDX-Identifier: MIT)
+- **SPDX IDs:** [MIT License](https://spdx.org/licenses/MIT)"
+14,pytorch-main/torch/distributed/elastic/utils/store.py,BSD-style,,"**Licenses = [BSD License]**
+
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree."""
+15,pytorch-main/torch/distributed/elastic/events/__init__.py,BSD-style,,"**Licenses = [BSD-style license]**
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree."""
+16,pytorch-main/torch/distributed/elastic/events/api.py,BSD-style,,"**Licenses = [BSD-style license]**
+
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree."""
+17,pytorch-main/torch/distributed/elastic/multiprocessing/redirects.py,BSD-style,,"**Licenses = [BSD-style license]**
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree."""
+18,pytorch-main/torch/distributed/elastic/rendezvous/etcd_server.py,BSD-style,,"**Licenses = [BSD License]**
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+**Evidence:**
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree."""
+19,pytorch-main/torch/utils/model_dump/preact.mjs,MIT,,"**Licenses:**
+
+```
+- MIT License
+- SPDX-License-Identifier: MIT
+```
+
+**SPDX-IDs:**
+
+```
+- MIT
+```"
+20,pytorch-main/torch/utils/data/_utils/worker.py,MIT,,"**Licenses = [MIT License]**
+**SPDX-IDs = [SPDX-License-Identifier: MIT]**
+
+**Evidence:**
+
+""Copyright (c) 2015 Melissa E. O'Neill Copyright (c) 2019 NumPy Developers""
+
+""Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions..."""
+21,pytorch-main/torch/_appdirs.py,MIT,MIT,"**Licenses:**
+
+- MIT License
+
+**SPDX-IDs:**
+
+- SPDX-License-Identifier: MIT"
+22,pytorch-main/torch/utils/hipify/hipify_python.py,MIT,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**Note:** The provided text does not contain any explicit software licenses."
+23,pytorch-main/torch/csrc/jit/testing/file_check.cpp,NCSA,NCSA,"**Licenses = [University of Illinois Open Source License]**
+**SPDX-IDs = [SPDX-License-Identifier: UIL]*
+
+**Evidence:**
+
+""This file is distributed under the University of Illinois Open Source License. See LICENSE.TXT for details."""
+24,pytorch-main/torch/csrc/jit/tensorexpr/unique_name_manager.h,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**Explanation:**
+
+The provided text does not contain any references to software licenses or copyright notices. Therefore, no licenses were identified."
+25,pytorch-main/torch/utils/data/graph.py,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**No software license found.**
+
+The provided text does not contain any discernible software licenses."
+26,pytorch-main/torch/nn/utils/_expanded_weights/conv_utils.py,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license was detected in the provided text."
+27,pytorch-main/torch/nn/utils/memory_format.py,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**No software license found.**"
+28,pytorch-main/torch/distributed/tensor/parallel/ddp.py,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**No software license found in the provided text.**"
+29,pytorch-main/torch/overrides.py,Public-domain,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**Note:** The provided text does not contain any explicit software licenses."
+30,pytorch-main/torch/masked/_ops.py,See-URL,,"**Licenses:**
+- MIT License
+- SPDX-License-Identifier: MIT
+
+**SPDX-IDs:**
+- MIT"
+31,pytorch-main/torch/mps/__init__.py,See-URL,,"**Licenses = []**
+**SPDX-IDs = []**
+
+**Explanation:**
+
+The provided text does not contain any explicit software licenses. Therefore, neither the licenses nor their SPDX identifiers could be identified."
+32,pytorch-main/torch/testing/_comparison.py,See-URL,,"**Licenses:**
+
+- `torch.testing.assert_close`: [MIT License](https://github.com/pytorch/pytorch/blob/master/LICENSE)
+- Other libraries and dependencies: Their respective licenses
+
+**Results:**
+
+**Licenses:**
+
+```
+Licenses = []
+SPDX-IDs = []
+```
+
+**Note:** The code provided does not include any explicit licensing information for the functions or libraries used. Therefore, the output of the `Licenses` and `SPDX-IDs` lists is empty."

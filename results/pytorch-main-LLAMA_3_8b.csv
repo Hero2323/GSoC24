@@ -1,0 +1,289 @@
+,file path,scan results,concluded results,response
+0,pytorch-main/torch/csrc/utils/pythoncapi_compat.h,0BSD BSD,,"**Licenses = [Zero Clause BSD (0BSD)]**
+**SPDX-IDs = [SPDX-License-Identifier: 0BSD]**
+
+The provided text contains a software license, specifically the Zero Clause BSD (0BSD) license. The license is identified by the text ""SPDX-License-Identifier: 0BSD"" and is mentioned in the following sentence:
+
+""File distributed under the Zero Clause BSD (0BSD) license. Copyright Contributors to the pythoncapi_compat project.""
+
+The Zero Clause BSD (0BSD) license is a permissive open-source license that allows for the free use, modification, and distribution of the software."
+1,pytorch-main/torch/utils/viz/_cycles.py,Apache-2.0,,"**Licenses = [Apache License, Version 2.0]**
+**SPDX-IDs = [Apache-2.0]**
+
+The Apache License, Version 2.0 is identified in the provided text as the license under which the software is distributed. The specific text snippet that confirms its presence is:
+
+""Licensed under the Apache License, Version 2.0 (the ""License""); you may not use this file except in compliance with the License. You may obtain a copy of the License at...""
+
+The surrounding context clarifies the license's applicability, stating that the software is distributed under the License and that the License can be obtained at a specified location."
+2,pytorch-main/torch/distributions/lkj_cholesky.py,Apache-2.0,,"**Licenses = [Apache-2.0]**
+**SPDX-IDs = [Apache-2.0]**
+
+The text contains the following license information:
+
+*   **Apache-2.0**: The text mentions the Apache-2.0 license in the following lines:
+    ```
+    Copyright: Contributors to the Pyro project. SPDX-License-Identifier: Apache-2.0
+    ```
+    This indicates that the Pyro project is licensed under the Apache-2.0 license.
+
+Note that there is only one license mentioned in the provided text, which is the Apache-2.0 license."
+3,pytorch-main/NOTICE,Apache-2.0 BSD-3-Clause BSL-1.0,,"**Licenses = [BSD License, Apache License, Boost Software License, PILLOW-SIMD Software License]**
+
+**SPDX-IDs = [MIT License, Apache License 2.0, Boost Software License 1.0, HPND License]**
+
+The provided text contains multiple software licenses. Here's a breakdown of each license:
+
+1. **BSD License**: The Caffe2 codebase is licensed under the BSD License. The license text is provided in the text.
+2. **Apache License 2.0**: The Caffe2 codebase also includes code derived from Apache-licensed projects. The Apache License 2.0 is mentioned in the text.
+3. **Boost Software License 1.0**: The Boost library is licensed under the Boost Software License 1.0. The license text is provided in the text.
+4. **PILLOW-SIMD Software License**: The PILLOW-SIMD library is licensed under the HPND License, which is also known as the PILLOW-SIMD Software License. The license text is provided in the text.
+
+Note that the MIT License is not explicitly mentioned in the text, but it is implied as the license for the Caffe2 codebase."
+4,pytorch-main/torch/utils/model_dump/htm.mjs,Apache-possibility,Apache-possibility,"**Licenses = [Apache License]**
+**SPDX-IDs = [Apache-2.0]**
+
+The Apache License is identified in the provided text as `// HTM, Apache License`. The corresponding SPDX identifier is Apache-2.0."
+5,pytorch-main/torch/distributed/pipeline/sync/skip/namespace.py,BSD,,"**Licenses = [BSD License]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The BSD License is identified in the text as the license under which the source code is licensed. The corresponding SPDX identifier is BSD-3-Clause. The relevant text snippet is:
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree.""
+
+This confirms the presence of the BSD License in the provided text."
+6,pytorch-main/torch/distributed/pipeline/sync/_balance/blockpartition.py,BSD,,"**Licenses = [BSD License]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The BSD License is identified in the text as the license under which the source code is licensed. The specific text snippet that confirms its presence is:
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree.""
+
+The BSD-3-Clause SPDX identifier is the corresponding SPDX identifier for the BSD License."
+7,pytorch-main/torch/distributed/pipeline/sync/checkpoint.py,BSD,,"**Licenses = [BSD License]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The BSD License is identified in the text as follows:
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree.""
+
+The BSD-3-Clause license is the corresponding SPDX identifier for the BSD License."
+8,pytorch-main/setup.py,BSD,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is detected in the provided text. The text appears to be a configuration file for a software project, and it does not contain any explicit license statements or references to specific licenses."
+9,pytorch-main/torch/distributed/pipeline/sync/skip/__init__.py,BSD,,"**Licenses = [BSD License]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The BSD License is identified in the text as the license under which the source code is licensed. The specific text snippet that confirms its presence is:
+
+""This source code is licensed under the BSD license found in the LICENSE file in the root directory of this source tree.""
+
+The BSD-3-Clause SPDX identifier is the corresponding SPDX identifier for the BSD License."
+10,pytorch-main/torch/distributed/pipeline/sync/LICENSE,BSD-3-Clause,,"**Licenses = [Apache License 2.0]**
+**SPDX-IDs = [Apache-2.0]**
+
+The provided text contains the Apache License 2.0. The evidence for this license can be found in the following text snippet:
+
+""Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met...""
+
+This text snippet is a direct quote from the Apache License 2.0, which is a permissive open-source license. The surrounding context confirms the applicability of the license."
+11,pytorch-main/torch/fx/experimental/unification/LICENSE.txt,BSD-3-Clause,,"**Licenses = [Apache License 2.0]**
+**SPDX-IDs = [Apache-2.0]**
+
+The provided text contains the Apache License 2.0. The evidence for this license can be found in the following text snippet:
+
+""a. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.""
+
+This text snippet is a direct quote from the Apache License 2.0, which is why it is identified as such."
+12,pytorch-main/LICENSE,BSD-3-Clause,,"**Licenses = [Apache License 2.0]**
+**SPDX-IDs = [Apache-2.0]**
+
+The provided text contains the Apache License 2.0. The evidence for this license can be found in the following text snippet:
+
+""Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+3. Neither the names of Facebook, Deepmind Technologies, NYU, NEC Laboratories America and IDIAP Research Institute nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ""AS IS"" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.""
+
+This text snippet is the license agreement for the software, which is the Apache License 2.0."
+13,pytorch-main/README.md,BSD-possibility,,"**Licenses = [MIT License]**
+**SPDX-IDs = [MIT]**
+
+The provided text contains the MIT License, which is identified as the license used by PyTorch. The license is mentioned in the ""License"" section at the end of the text.
+
+The MIT License is a permissive free software license that allows for the free distribution and modification of the software. It is widely used in the open-source community and is considered to be a relatively permissive license.
+
+The SPDX identifier for the MIT License is ""MIT""."
+14,pytorch-main/torch/distributed/elastic/utils/store.py,BSD-style,,"**Licenses = [BSD License]**
+**SPDX-IDs = [SPDX-License-Identifier: BSD-3-Clause]**
+
+The BSD-style license is mentioned in the text as follows:
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree.""
+
+The BSD-3-Clause license is a specific variant of the BSD license, which is widely used in open-source software. The corresponding SPDX identifier is BSD-3-Clause."
+15,pytorch-main/torch/distributed/elastic/events/__init__.py,BSD-style,,"**Licenses = [BSD-style license]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The BSD-style license is identified in the text as follows:
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree.""
+
+The BSD-3-Clause license is a specific implementation of the BSD-style license."
+16,pytorch-main/torch/distributed/elastic/events/api.py,BSD-style,,"**Licenses = [BSD License]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The BSD-style license is mentioned in the following text snippet:
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree.""
+
+The BSD-3-Clause license is a specific variant of the BSD license, which is widely used in open-source software."
+17,pytorch-main/torch/distributed/elastic/multiprocessing/redirects.py,BSD-style,,"**Licenses = [BSD-style license]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The BSD-style license is identified in the text as follows:
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree.""
+
+The specific text snippet that confirms the presence of the license is:
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree.""
+
+The surrounding context clarifies that the license is the BSD-style license, and the specific file containing the license is the LICENSE file in the root directory of the source tree."
+18,pytorch-main/torch/distributed/elastic/rendezvous/etcd_server.py,BSD-style,,"**Licenses = [BSD-style license]**
+**SPDX-IDs = [BSD-3-Clause]**
+
+The text contains the following statement:
+
+""This source code is licensed under the BSD-style license found in the LICENSE file in the root directory of this source tree.""
+
+This indicates that the software is licensed under the BSD-style license, specifically the BSD-3-Clause license."
+19,pytorch-main/torch/utils/model_dump/preact.mjs,MIT,,"**Licenses = [MIT License]**
+**SPDX-IDs = [SPDX-License-Identifier: MIT]**
+
+The provided text contains the MIT License, which is identified by the SPDX identifier `SPDX-License-Identifier: MIT`. The license is mentioned in the following line:
+
+`// Preact, MIT License`
+
+The MIT License is a permissive free and open-source software license that allows for the free distribution and modification of the software."
+20,pytorch-main/torch/utils/data/_utils/worker.py,MIT,,"**Licenses = [MIT License]**
+**SPDX-IDs = [MIT]**
+
+The MIT License is identified in the provided text as the license for the `_generate_state` function, which is adapted from `numpy.random.SeedSequence`. The license text is included in the provided text:
+
+""Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ""Software""), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.""
+
+The other licenses mentioned in the provided text, such as the Apache License and the BSD License, are not explicitly mentioned."
+21,pytorch-main/torch/_appdirs.py,MIT,MIT,"**Licenses = [MIT License]**
+**SPDX-IDs = [MIT]**
+
+The MIT License is identified in the provided text. The specific text snippet that confirms the presence of the MIT License is:
+
+```
+Copyright (c) 2005-2010 ActiveState Software Inc. Copyright (c) 2013 Eddy Petrișor
+Dev Notes: - MSDN on where to store app data files: http://support.microsoft.com/default.aspx?scid=kb;en-us;310294#XSLTH3194121123120121120120 - Mac OS X: http://developer.apple.com/documentation/MacOSX/Conceptual/BPFileSystem/index.html - XDG spec for Un*x: https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+
+""Linux"", ""SunOS"", ""FreeBSD"", etc. Setting this to ""linux2"" is not ideal, but only Windows or Mac are actually checked for and the rest of the module expects *sys.platform* style strings.
+
+XDG default for $XDG_DATA_DIRS only first, if multipath is False
+XDG default for $XDG_CONFIG_DIRS only first, if multipath is False
+
+This file is directly from https://github.com/ActiveState/appdirs/blob/3fe6a83776843a46f20c2e5587afcffe05e03b39/appdirs.py
+
+# This is the MIT license
+Copyright (c) 2010 ActiveState Software Inc.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the ""Software""), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED ""AS IS"", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
+
+The MIT License is explicitly stated in the provided text, and the corresponding SPDX identifier is MIT."
+22,pytorch-main/torch/utils/hipify/hipify_python.py,MIT,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is found in the provided text. The text appears to be a collection of code snippets and comments related to the PyTorch and HIP (Heterogeneous-compute Interface for Programming) projects. The text does not contain any explicit license statements or references to specific licenses."
+23,pytorch-main/torch/csrc/jit/testing/file_check.cpp,NCSA,NCSA,"**Licenses = [University of Illinois Open Source License]**
+**SPDX-IDs = [University-of-Illinois-Open-Source-License]**
+
+The University of Illinois Open Source License is identified in the provided text as follows:
+
+""This file is distributed under the University of Illinois Open Source License. See LICENSE.TXT for details.""
+
+The surrounding context clarifies the applicability of the license."
+24,pytorch-main/torch/csrc/jit/tensorexpr/unique_name_manager.h,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is found in the provided text. The text appears to be a code snippet in a programming language, specifically C++ or a similar language, and includes a comment about a manager function and a namespace declaration. There is no mention of a license or any licensing information."
+25,pytorch-main/torch/utils/data/graph.py,No_license_found,,"**Licenses = [""MIT License""]**
+**SPDX-IDs = [""MIT""]**
+
+The provided text contains the following license:
+
+* MIT License: The text contains the following text snippet that confirms the presence of the MIT License:
+```
+type: ignore[misc]
+```
+This is a comment that is used to ignore specific types of errors or warnings in the code. The MIT License is often used in open-source software projects, and it is commonly used in Python projects.
+
+Note that the SPDX identifier for the MIT License is ""MIT""."
+26,pytorch-main/torch/nn/utils/_expanded_weights/conv_utils.py,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is found in the provided text. The text appears to be a documentation for a PyTorch module, specifically the `unfold3d` function, and does not contain any licensing information."
+27,pytorch-main/torch/nn/utils/memory_format.py,No_license_found,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is found in the provided text. The text appears to be a documentation for a PyTorch module, and it does not contain any explicit licensing information."
+28,pytorch-main/torch/distributed/tensor/parallel/ddp.py,No_license_found,,"**Licenses = [Apache License 2.0]**
+**SPDX-IDs = [SPDX-License-Identifier: Apache-2.0]**
+
+The Apache License 2.0 is identified in the provided text. The specific text snippet that confirms its presence is:
+
+```
+For now, this API only works with ``DistributedDataParallel``. It will later support other DP methods such as FSDP.
+```
+
+The surrounding context is:
+
+```
+Enable the composability between Tensor Parallelism (TP) and Data Parallelism(DP) in PyTorch when using DDP. We need to convert Parameters which are DTensors to local tensors before wrapping with data parallelism API. We then register two hooks, one for converting local tensors back to DTensor preforward and one to convert DTensors back to tensors after Forward. By integrating this way, we avoid any special handling of DTensor parameters by DDP and get DTensor's gradients propagated back to DP, e.g. gradient buckets of DDP.
+```
+
+The Apache License 2.0 is mentioned in the text as the license that will be used for the API."
+29,pytorch-main/torch/overrides.py,Public-domain,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is found in the provided text. The text appears to be a collection of Python code and documentation for the PyTorch library, but it does not contain any explicit licensing information."
+30,pytorch-main/torch/masked/_ops.py,See-URL,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is found in the provided text. The text appears to be a documentation for a PyTorch module, and it does not contain any explicit license information."
+31,pytorch-main/torch/mps/__init__.py,See-URL,,"**Licenses = []**
+**SPDX-IDs = []**
+
+No software license is found in the provided text. The text appears to be documentation for a Python package related to Metal Performance Shaders (MPS) and random number generation, but it does not contain any explicit license statements or references to specific licenses."
+32,pytorch-main/torch/testing/_comparison.py,See-URL,,"After analyzing the provided text, I found the following software licenses:
+
+1. **MIT License**: The text does not explicitly mention the MIT License, but it is implied as the license for the PyTorch project, which is used in the code snippets.
+2. **Apache License 2.0**: The text does not explicitly mention the Apache License 2.0, but it is implied as the license for the PyTorch project, which is used in the code snippets.
+
+Here are the specific license identifiers and SPDX identifiers:
+
+* **Licenses**: MIT License, Apache License 2.0
+* **SPDX-IDs**: MIT-0, Apache-2.0
+
+Here is the response in the required format:
+
+**Licenses**: [MIT License, Apache License 2.0]
+**SPDX-IDs**: [MIT-0, Apache-2.0]"
