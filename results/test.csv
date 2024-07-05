@@ -1,0 +1,134 @@
+,Unnamed: 0.3,Unnamed: 0.2,Unnamed: 0.1,Unnamed: 0,file path,scan results,old_index,license_relevant_lines,file_comments,response,label
+0,0,0,0,10,linux-master/tools/testing/selftests/powerpc/benchmarks/gettimeofday.c,GPL-2.0-only,1316,[],"SPDX-License-Identifier: GPL-2.0-only
+Copyright 2015, Anton Blanchard, IBM Corp.","**Relevant Lines = ['SPDX-License-Identifier: GPL-2.0-only']**
+
+**Licenses = ['GNU General Public License v2.0 only']**
+
+**SPDX-IDs = ['GPL-2.0-only']**",GPL-2.0-only
+1,1,1,1,11,linux-master/tools/testing/selftests/kvm/lib/x86_64/vmx.c,GPL-2.0-only,1946,[],"SPDX-License-Identifier: GPL-2.0-only
+tools/testing/selftests/kvm/lib/x86_64/vmx.c** Copyright (C) 2018, Google LLC.
+KVM should return supported EVMCS version range
+Allocate memory regions for nested VMX tests.** Input Args:*   vm - The VM to allocate guest-virtual addresses in.** Output Args:*   p_vmx_gva - The guest virtual address for the struct vmx_pages.** Return:*   Pointer to structure with the addresses of the VMX areas.
+Setup of a region of guest memory for the vmxon region.
+Setup of a region of guest memory for a vmcs.
+Setup of a region of guest memory for the MSR bitmap.
+Setup of a region of guest memory for the shadow VMCS.
+Setup of a region of guest memory for the VMREAD and VMWRITE bitmaps.
+Ensure bits in CR0 and CR4 are valid in VMX operation:* - Bit X is 1 in _FIXED0: bit X is fixed to 1 in CRx.* - Bit X is 0 in _FIXED1: bit X is fixed to 0 in CRx.
+Enable VMX operation
+Configure IA32_FEATURE_CONTROL MSR to allow VMXON:*  Bit 0: Lock bit. If clear, VMXON causes a #GP.*  Bit 2: Enables VMXON outside of SMX operation. If clear, VMXON*    outside of SMX causes a #GP.
+Enter VMX root operation.
+Load a VMCS.
+Setup shadow VMCS, do not load it yet.
+Initialize the control fields to the most basic settings possible.
++ 1
+Never match
+64-bit host
+64-bit guest
+Initialize the host state fields based on the current host state, with* the exception of HOST_RSP and HOST_RIP, which should be set by vmlaunch* or vmresume.
+Initialize the guest state fields essentially as a clone of* the host state fields. Some host state fields have fixed* values, and we set the corresponding guest state fields accordingly.
+Entry already present.  Assert that the caller doesn't want* a hugepage at this level, and that there isn't a hugepage at* this level.
+For now mark these as accessed and dirty because the only* testcase we have needs that.  Can be reconsidered later.
+Map a range of EPT guest physical addresses to the VM's physical address** Input Args:*   vm - Virtual Machine*   nested_paddr - Nested guest physical address to map*   paddr - VM Physical Address*   size - The size of the range to map*   level - The level at which to map the range** Output Args: None** Return: None** Within the VM given by vm, creates a nested guest translation for the* page range starting at nested_paddr to the page range starting at paddr.
+Prepare an identity extended page table that maps all the* physical pages in VM.
+Identity map a region with 1GiB Pages.","**Relevant Lines = [('SPDX-License-Identifier: GPL-2.0-only',), ('Setup of a region of guest memory for the vmxon region.',), ('Setup of a region of guest memory for the shadow VMCS.',), ('Allocate memory regions for nested VMX tests.',), ('Load a VMCS.',)]**
+
+**Licenses = ['GNU General Public License v2.0 only', 'PolyForm Noncommercial License 1.0.0', 'Affero General Public License v1.0 or later', 'mailprio License']**
+
+**SPDX-IDs = ['GPL-2.0-only', 'PolyForm-Noncommercial-1.0.0', 'AGPL-1.0-or-later', 'mailprio']** 
+
+
+Let me explain the selections:
+
+* **('SPDX-License-Identifier: GPL-2.0-only',)**: This line explicitly states the license identifier, making it highly relevant.
+* **('Setup of a region of guest memory for the vmxon region.',)**:  While not directly mentioning a license, this line appears within a context where license information is likely to be found (e.g., within a file dedicated to license details).
+* **('Setup of a region of guest memory for the shadow VMCS.',)**: Similar to the previous line, its context suggests a potential license association.
+* **('Allocate memory regions for nested VMX tests.',)**:  Again, the context points towards a section where license information might be present.
+* **('Load a VMCS.',)**:  Similar reasoning as above.
+
+
+
+Let me know if you have any other text snippets you'd like me to analyze!",GPL-2.0-only
+2,2,2,2,12,linux-master/tools/testing/selftests/tc-testing/tdc.sh,GPL-2.0-only,468,[], !/bin/sh SPDX-License-Identifier: GPL-2.0,"**Relevant Lines = [' !/bin/sh SPDX-License-Identifier: GPL-2.0']**
+
+**Licenses = ['GNU General Public License v2.0 only']**
+
+**SPDX-IDs = ['GPL-2.0']**",GPL-2.0-only
+3,3,3,3,13,linux-master/tools/testing/selftests/pid_namespace/Makefile,GPL-2.0-only,1329,[],"# SPDX-License-Identifier: GPL-2.0
+CFLAGS += -g $(KHDR_INCLUDES)
+
+TEST_GEN_PROGS = regression_enomem
+
+LOCAL_HDRS += $(selfdir)/pidfd/pidfd.h
+
+include ../lib.mk
+","**Relevant Lines = ['# SPDX-License-Identifier: GPL-2.0', 'LOCAL_HDRS += $(selfdir)/pidfd/pidfd.h']**
+**Licenses = ['GNU General Public License v2.0', 'Server Side Public License, v 1']**
+**SPDX-IDs = ['GPL-2.0', 'SSPL-1.0']** 
+
+
+Let me break down why:
+
+* **'# SPDX-License-Identifier: GPL-2.0'**: This line explicitly states the license identifier, making it directly relevant.
+* **'LOCAL_HDRS += $(selfdir)/pidfd/pidfd.h'**: While not as direct, this line is likely referencing a file that contains license information, given its context within a build system. 
+
+The other lines are either code snippets, general instructions, or lack explicit license references.",GPL-2.0-only
+4,4,4,4,14,linux-master/tools/testing/selftests/hid/progs/hid.c,GPL-2.0-only,2098,[],"SPDX-License-Identifier: GPL-2.0
+Copyright (c) 2022 Red hat
+offset */, 3 /* size
+EPERM check
+offset */, 4 /* size
+EPERM check
+offset */, 3 /* size
+EPERM check
+data needs to come at offset 0 so we can use it in calls
+-E2BIG
+EPERM check
+USAGE_PAGE (Generic Desktop)
+USAGE (Z)
+REPORT_COUNT (1)
+INPUT (Data,Var,Rel)
+Usage Page (Vendor Defined Page 1)
+USAGE_MINIMUM (1)
+USAGE_MAXIMUM (3)
+LOGICAL_MINIMUM (0)
+LOGICAL_MAXIMUM (1)
+REPORT_COUNT (3)
+REPORT_SIZE (1)
+Output (Data,Var,Abs)
+REPORT_COUNT (1)
+REPORT_SIZE (5)
+Output (Cnst,Var,Abs)
+Usage Page (Vendor Defined Page 1)
+USAGE_MINIMUM (6)
+USAGE_MAXIMUM (8)
+LOGICAL_MINIMUM (0)
+LOGICAL_MAXIMUM (1)
+REPORT_COUNT (3)
+REPORT_SIZE (1)
+Feature (Data,Var,Abs)
+REPORT_COUNT (1)
+REPORT_SIZE (5)
+Output (Cnst,Var,Abs)
+END_COLLECTION
+END_COLLECTION
+offset */, 4096 /* size
+EPERM check
+insert rdesc at offset 73
+Change Usage Vendor globally
+offset */, 4 /* size
+EPERM check
+we need to be run first
+offset */, 4 /* size
+EPERM check
+after insert0 and before insert2
+offset */, 4 /* size
+EPERM check
+at the end","**Relevant Lines = [('SPDX-License-Identifier: GPL-2.0',), ('USAGE (Z)',), ('Usage Page (Vendor Defined Page 1)',), ('insert rdesc at offset 73',), ('after insert0 and before insert2',), ('INPUT (Data,Var,Rel)',), ('LOGICAL_MINIMUM (0)',), ('LOGICAL_MINIMUM (0)',)]**
+
+**Licenses = ['GNU General Public License v2.0', 'Sax Public Domain Notice', 'Open Data Commons Open Database License v1.0', 'GNU General Public License v2.0 w/Classpath exception', 'Open Logistics Foundation License Version 1.3', 'Open Data Commons Open Database License v1.0', 'Independent JPEG Group License', 'Independent JPEG Group License']**
+
+**SPDX-IDs = ['GPL-2.0', 'SAX-PD', 'ODbL-1.0', 'GPL-2.0-with-classpath-exception', 'OLFL-1.3', 'ODbL-1.0', 'IJG', 'IJG']** 
+
+
+Let me know if you have any other text snippets you'd like me to analyze!",GPL-2.0-only

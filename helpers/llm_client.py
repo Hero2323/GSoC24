@@ -10,7 +10,10 @@ import time
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 from ratelimit import limits
 from helpers.models import Models
+from helpers.functions import get_top_similar_license_lines
 import nirjas
+import pickle
+from sentence_transformers import SentenceTransformer, util
 
 class LLMClient():
     """
@@ -21,7 +24,7 @@ class LLMClient():
     Supported Models:
         - Llama 3 8b (Groq)
         - Mistral 7b (Together AI)
-        - Phi 3 mini, small (NVIDIA)
+        - Phi 3 mini, small, medium, Gemma 2 9b (NVIDIA)
         - Gemma 1 7b (Groq)
     """
 
@@ -42,12 +45,12 @@ class LLMClient():
             model = Models.GEMMA_7b.value 
         )
 
-        self.nvidiaClient = self.model = OpenAI(
+        self.nvidiaClient = OpenAI(
             base_url = "https://integrate.api.nvidia.com/v1",
             api_key= os.getenv('NVIDIA_API_KEY'),
         )
 
-        self.togetherClient = self.client = OpenAI(
+        self.togetherClient = OpenAI(
             base_url='https://api.together.xyz/v1',
             api_key=os.getenv('TOGETHER_API_KEY'),
         )
@@ -67,11 +70,12 @@ class LLMClient():
         Returns:
             The rate limit as an integer.
         """
-        if model.name == Models.LLAMA_3_8b.name or model.name == Models.GEMMA_7b.name:
+        if model.name in [Models.LLAMA_3_8b.name, Models.GEMMA_7b.name]:
             return 28
-        elif model.name == Models.MISTRAL_7b.name:
+        elif model.name in [Models.MISTRAL_7b.name]:
             return 58
-        elif model.name == Models.PHI_3_MINI.name or model.name == Models.PHI_3_SMALL.name:
+        elif model.name in [Models.PHI_3_MINI.name, Models.PHI_3_SMALL.name,
+                            Models.PHI_3_MEDIUM.name, Models.GEMMA_2_9b.name]:
             return 55
         else:
             raise Exception(f'Unrecognized model: {model.name}')
@@ -80,9 +84,18 @@ class LLMClient():
         """Extracts and concatenates all comments from keys containing "comment"."""
         all_comments = []
 
+        # for single_line_comment in data['single_line_comment']:
+        #     all_comments.append(single_line_comment['comment'])
+        #     all_comments.append('\n')
+        # for cont_single_line_comment in data['cont_single_line_comment']:
+        #     all_comments.append(cont_single_line_comment['comment'])
+        #     all_comments.append('\n')
+        # for multi_line_comment in data['multi_line_comment']:
+        #     all_comments.append(multi_line_comment['comment'])
+        #     all_comments.append('\n')
+
         for key, values in data.items():
-            if "comment" in key:  # Check if the key has "comment" in it
-                # Handle both list and single entry cases
+            if "comment" in key:
                 if isinstance(values, list):
                     for entry in values:
                         all_comments.append(entry["comment"])
@@ -125,14 +138,15 @@ class LLMClient():
                     temperature=temperature,
                 )
                 response = chat_completion.choices[0].message.content
-            elif model.name == Models.PHI_3_MINI.name or model.name == Models.PHI_3_SMALL.name:
+            elif model.name in [Models.PHI_3_MINI.name, Models.PHI_3_SMALL.name,
+                                Models.PHI_3_MEDIUM.name, Models.GEMMA_2_9b.name]:
                 chat_completion = self.nvidiaClient.chat.completions.create(
                     model=model.value,
                     messages=[
-                        {'role': 'user', 'content': prompt}
+                        {"role": "user", "content": prompt}
                     ],
-                    n=1,
-                    temperature=temperature,
+                    temperature=temperature if temperature != 0 else 0.01,
+                    max_tokens=2024
                 )
                 response = chat_completion.choices[0].message.content
             else:
@@ -159,6 +173,13 @@ class LLMClient():
                         parser, temperature = 0, output_path='results', log_every=0,
                         output_name=None, retry_fails=True, extra_file_path='extras'):
         
+        embeddings_file_path = '/home/jimbo/Desktop/GSoC24/repo/GSoC24/extras/license_information/license_embeddings/768_all-mpnet-base-v2-license-embedding.pkl'
+        if os.path.exists(embeddings_file_path):
+            print(f"Loading pre-embedded licenses from: {embeddings_file_path}")
+            with open(embeddings_file_path, "rb") as fIn:
+                stored_data = pickle.load(fIn)
+                license_embeddings = stored_data['embeddings']
+        embedding_model = SentenceTransformer("all-mpnet-base-v2")
         """
         Processes a dataset of texts, generating responses using the specified LLM model.
 
@@ -175,11 +196,30 @@ class LLMClient():
 
             try: 
                 comments = nirjas.extract(os.path.join(extra_file_path, row['file path']))
-                prompt = prompt_function(self._extract_comments(comments))
+                comments = self._extract_comments(comments)
+                top_license_lines = get_top_similar_license_lines(\
+                        comments,
+                        'extras/license_information/license_dataset.csv',
+                        license_embeddings,
+                        embedding_model,
+                        top_k=10,
+                        embedding_approach='license-embedding',
+                        double_semantic_search = True,
+                    )
+                prompt = prompt_function(top_license_lines)
             except:
                 with open(os.path.join(extra_file_path, row['file path']), "r") as f:
                     comments = f.read()
-                prompt = prompt_function(comments)
+                top_license_lines = get_top_similar_license_lines(\
+                        comments,
+                        'extras/license_information/license_dataset.csv',
+                        license_embeddings,
+                        embedding_model,
+                        top_k=10,
+                        embedding_approach='license-embedding',
+                        double_semantic_search = True,
+                    )
+                prompt = prompt_function(top_license_lines)
 
             if log_every > 0:
                 if index % log_every == 0:
@@ -201,11 +241,30 @@ class LLMClient():
                     
                     try: 
                         comments = nirjas.extract(os.path.join(extra_file_path, df.loc[index, 'file path']))
-                        prompt = prompt_function(self._extract_comments(comments))
+                        comments = self._extract_comments(comments)
+                        top_license_lines = get_top_similar_license_lines(\
+                            comments,
+                            'extras/license_information/license_dataset.csv',
+                            license_embeddings,
+                            embedding_model,
+                            top_k=10,
+                            embedding_approach='license-embedding',
+                            double_semantic_search=True,
+                        )
+                        prompt = prompt_function(top_license_lines)
                     except:
                         with open(os.path.join(extra_file_path, df.loc[index, 'file path']), "r") as f:
                             comments = f.read()
-                        prompt = prompt_function(comments)
+                        top_license_lines = get_top_similar_license_lines(\
+                            comments,
+                            'extras/license_information/license_dataset.csv',
+                            license_embeddings,
+                            embedding_model,
+                            top_k=10,
+                            embedding_approach='license-embedding',
+                            double_semantic_search=True,
+                        )
+                        prompt = prompt_function(top_license_lines)
                     for attempt in range(5):
                         try:
                             df.loc[index, 'response'] = self._infer(model, prompt, temperature)
@@ -220,13 +279,13 @@ class LLMClient():
 
         if output_name:
             df.to_csv(os.path.join(output_path, f'{output_name}.csv'))
-            shutil.copyfile(''+self.error_log_file, f'{output_name}.log')
+            shutil.copyfile(''+self.error_log_file_name, f'{output_name}.log')
         else:
             output_name = df_path.split('.csv')[0] + f'-{modelName}.csv'
             df.to_csv(os.path.join(output_path, output_name))
-            shutil.copyfile(''+self.error_log_file, f'{output_name}.log')
+            shutil.copyfile(''+self.error_log_file_name, f'{output_name}.log')
         
-        open(''+self.error_log_file, 'w').close()
+        open(''+self.error_log_file_name, 'w').close()
 
         df_remaining = df.copy()
         df_remaining = df_remaining[df_remaining['response'].notna()]

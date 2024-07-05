@@ -10,4 +10,6 @@ class Models(Enum):
     
     # NVIDIA Models
     PHI_3_MINI = 'microsoft/phi-3-mini-128k-instruct'
-    PHI_3_SMALL = 'phi-3-small-128k-instruct'
+    PHI_3_SMALL = 'microsoft/phi-3-small-128k-instruct'
+    PHI_3_MEDIUM = 'microsoft/phi-3-medium-128k-instruct'
+    GEMMA_2_9b = 'google/gemma-2-9b-it'

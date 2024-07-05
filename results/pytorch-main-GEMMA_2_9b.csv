@@ -1,0 +1,14 @@
+,file path,scan results,concluded results,response
+0,pytorch-main/torch/csrc/utils/pythoncapi_compat.h,0BSD BSD,,"*   **Licenses = [""0BSD License""]**
+*   **SPDX-IDs = [""0BSD""]** 
+
+The license is explicitly stated in the text:
+
+""File distributed under the Zero Clause BSD (0BSD) license."""
+1,pytorch-main/torch/distributions/lkj_cholesky.py,Apache-2.0,,"*   **Licenses = [""Apache-2.0""]**
+*   **SPDX-IDs = [""Apache-2.0""]** 
+
+
+The text explicitly states:
+
+""Copyright: Contributors to the Pyro project. SPDX-License-Identifier: Apache-2.0"""

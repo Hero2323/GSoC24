@@ -3,3 +3,7 @@ logs/*
 /*__pychache__
 gsoc24env
 gsoc24env/*
+*/__pychache__
+helpers/__pychache__/*
+helpers/__pychache__/
+.vscode
