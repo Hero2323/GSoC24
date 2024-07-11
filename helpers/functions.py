@@ -1,3 +1,4 @@
+from typing import Optional
 from sentence_transformers import SentenceTransformer
 import os
 import json
@@ -5,12 +6,11 @@ import pickle
 import re
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from gensim.models import FastText  # Import the FastText class
 from fuzzywuzzy import fuzz
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import nirjas
+from itertools import combinations
 
 def sample_by_label_limit(df: pd.DataFrame, label_column: str, max_samples_per_label = 5, random_state=None):
     """
@@ -99,359 +99,249 @@ def create_license_dataset(path_to_license_details_directory, output_path=None):
         new_row = pd.DataFrame({'License Name': f"{license_data['licenseName']}", 
                        'License ID': f"{license_data['licenseId']}",
                     #    'License Text': f"\n{license_data['licenseText']}"}, index=[index])
-                       'License Text': f"\nSPDX-License-Identifier: {license_data['licenseId']}\nLicense Name: {license_data['licenseName']}\n{license_data['licenseText']}"}, index=[index])
+                       'License Text': f"\nSPDX-License-Identifier: {license_data['licenseId']}\n\nLicense Name: {license_data['licenseName']}\n\n{license_data['licenseText']}"}, index=[index])
         df = pd.concat([df, new_row], ignore_index=True)
         
     df.to_csv(license_dataset_file_path)
 
     print(f'License dataset file created successfully at {license_dataset_file_path}')
 
-def get_top_similar_license_lines_old(
-    code_text,
-    licenses_file_path,
-    license_embeddings,
-    model="all-mpnet-base-v2",
-    embeddings_dir="extras/license_information/license_embeddings",
-    embedding_approach = 'file-embedding',
-    top_k=3,
-):
-    """
-    Finds the top-k most similar lines in a code file to the entire license text using either TF-IDF or sentence embeddings.
-    """
-
-    os.makedirs(embeddings_dir, exist_ok=True)
-    with open(licenses_file_path, 'r', encoding='utf-8') as file:
-                licenses = file.read()
-
-    # if model == 'tf-idf':
-    #     embeddings_file_path = os.path.join(embeddings_dir, f"tfidf_vectorizer-{embedding_approach}.pkl")
-    #     if os.path.exists(embeddings_file_path):
-    #         print(f"Loading pre-trained TF-IDF vectorizer from: {embeddings_file_path}")
-    #         with open(embeddings_file_path, "rb") as f:
-    #             tfidf_data = pickle.load(f)
-    #             vectorizer = tfidf_data['vectorizer']
-    #             license_vectors = tfidf_data['embeddings']
-    #     else:
-    #         print(f"Pre-trained TF-IDF vectorizer not found. Training and saving to: {embeddings_file_path}")
-    #         vectorizer = TfidfVectorizer()
-    #         vectorizer.fit(licenses.split('----------------------------------------'))
-    #         if embedding_approach == 'file-embedding':
-    #             license_vectors = vectorizer.transform(licenses) #TODO: Fix error in this case. add a acheck
-    #             # license_vectors = license_vectors.reshape(1, -1)
-    #         elif embedding_approach == 'line-embedding':
-    #             license_vectors = vectorizer.transform(licenses.split('\n'))
-    #         elif embedding_approach == 'license-embedding':
-    #             license_vectors = vectorizer.transform(licenses.split('----------------------------------------'))
-    #         else:
-    #             # TODO: add error
-    #             pass
-    #         with open(embeddings_file_path, "wb") as f:
-    #             pickle.dump({'vectorizer': vectorizer, 'embeddings': license_vectors}, f, protocol=pickle.HIGHEST_PROTOCOL)
-
-    #     # Encode code chunks (TF-IDF)
-    #     code_chunks = code_text.split('\n')
-    #     code_vectors = vectorizer.transform(code_chunks)
-    # elif model == 'bow':
-    #     embeddings_file_path = os.path.join(embeddings_dir, f"bow_vectorizer-{embedding_approach}.pkl")
-    #     if os.path.exists(embeddings_file_path):
-    #         print(f"Loading pre-trained BoW vectorizer from: {embeddings_file_path}")
-    #         with open(embeddings_file_path, "rb") as f:
-    #             bow_data = pickle.load(f)
-    #             vectorizer = bow_data['vectorizer']
-    #             license_vectors = bow_data['embeddings']
-    #     else:
-    #         print(f"Pre-trained BoW vectorizer not found. Training and saving to: {embeddings_file_path}")
-    #         vectorizer = CountVectorizer()  # Use CountVectorizer for BoW
-
-    #         if embedding_approach == 'file-embedding':
-    #             # Check for empty licenses
-    #             if not licenses.split('----------------------------------------')[0]:
-    #                 raise ValueError("No licenses found to embed in license.txt")
-    #             license_vectors = vectorizer.fit_transform(licenses)
-    #         elif embedding_approach == 'line-embedding':
-    #             license_vectors = vectorizer.fit_transform(licenses.split('\n'))
-    #         elif embedding_approach == 'license-embedding':
-    #             license_vectors = vectorizer.fit_transform(licenses.split('----------------------------------------'))
-    #         else:
-    #             raise ValueError(f"Invalid embedding approach: {embedding_approach}")
-
-    #         with open(embeddings_file_path, "wb") as f:
-    #             pickle.dump({'vectorizer': vectorizer, 'embeddings': license_vectors}, f, protocol=pickle.HIGHEST_PROTOCOL)
-
-    #     # Encode code chunks (BoW)
-    #     code_chunks = code_text.split('\n')
-    #     code_vectors = vectorizer.transform(code_chunks)
-    # elif model == 'fasttext':
-    #     embeddings_file_path = os.path.join(embeddings_dir, f"fasttext_model-{embedding_approach}.bin")
-    #     if os.path.exists(embeddings_file_path):
-    #         print(f"Loading pre-trained FastText model from: {embeddings_file_path}")
-    #         fasttext_model = FastText.load(embeddings_file_path)
-    #     else:
-    #         print(f"Pre-trained FastText model not found. Training and saving to: {embeddings_file_path}")
-    #         sentences = [line.strip() for line in licenses.split('\n') if line.strip()]  # Remove empty lines
-    #         # Train FastText model with the appropriate sentences
-    #         fasttext_model = FastText(sentences, vector_size=100, window=5, min_count=1, workers=4) 
-    #         fasttext_model.save(embeddings_file_path)
-        
-    #     all_words = [word for sentence in sentences for word in sentence.split()]
-    #     all_word_embeddings = [fasttext_model.wv.get_vector(word) for word in all_words if word in fasttext_model.wv]
-        
-    #     # Prepare for the FastText embedding 
-    #     if embedding_approach == 'file-embedding':
-    #         # Average all word embeddings to get file-level embedding
-    #         license_embeddings = np.mean(all_word_embeddings, axis=0).reshape(1, -1)
-    #     elif embedding_approach == 'line-embedding':
-    #         # Average word embeddings for each line
-    #         license_embeddings = []
-    #         for sentence in sentences:
-    #             words = sentence.split()
-    #             line_embedding = np.mean([fasttext_model.wv.get_vector(word) for word in words if word in fasttext_model.wv], axis=0)
-    #             license_embeddings.append(line_embedding)
-
-    #     elif embedding_approach == 'license-embedding':
-    #         # Average word embeddings within each license section
-    #         license_embeddings = []
-    #         current_license_embeddings = []
-    #         for word in all_words:
-    #             current_license_embeddings.append(fasttext_model.wv.get_vector(word))
-    #             if word == '----------------------------------------':  # end of license section
-    #                 license_embeddings.append(np.mean(current_license_embeddings, axis=0))
-    #                 current_license_embeddings = []  # Reset for the next license
-    #     else:
-    #         pass #TODO: fix
-    #     # Encode code chunks (FastText)
-    #     code_embeddings = []
-    #     code_chunks = code_text.split('\n')
-    #     for chunk in code_chunks:
-    #         chunk_embeddings = [fasttext_model.wv.get_vector(word) for word in chunk.split()]
-    #         if chunk_embeddings:
-    #             code_embeddings.append(np.mean(chunk_embeddings, axis=0))
-    #         else:
-    #             code_embeddings.append(np.zeros(fasttext_model.vector_size))
-    # else:
-    #     # Use SentenceTransformer for embedding
-    #     model = SentenceTransformer(model)
-    #     model_name = str(model).split("(")[0].strip()
-    #     embeddings_file_path = os.path.join(embeddings_dir, f"{model.get_sentence_embedding_dimension()}_{model_name.replace('/', '_')}-{embedding_approach}.pkl")
-
-    #     if os.path.exists(embeddings_file_path):
-    #         print(f"Loading pre-embedded licenses from: {embeddings_file_path}")
-    #         with open(embeddings_file_path, "rb") as fIn:
-    #             stored_data = pickle.load(fIn)
-    #             license_embeddings = stored_data['embeddings']
-    #     else:
-    #         print(f"Pre-embedded licenses not found. Creating embeddings and saving to: {embeddings_file_path}")
-    #         license_embeddings = model.encode(licenses)
-    #         if embedding_approach == 'file-embedding':
-    #             license_embeddings = model.encode(licenses)
-    #             license_embeddings = license_embeddings.reshape(1, -1)
-    #         elif embedding_approach == 'line-embedding':
-    #             license_embeddings = model.encode(licenses.split('\n'))
-    #         elif embedding_approach == 'license-embedding':
-    #             license_embeddings = model.encode(licenses.split('----------------------------------------'))
-    #         else:
-    #             #TODO: add error
-    #             pass
-    #         with open(embeddings_file_path, "wb") as fOut:
-    #             pickle.dump({'embeddings': license_embeddings}, fOut, protocol=pickle.HIGHEST_PROTOCOL)
-        
-    #     # Encode code chunks (Sentence Transformers)
-    #     code_chunks = code_text.split('\n')
-    #     code_embeddings = model.encode(code_chunks)
-    
-    code_chunks = code_text.split('\n')
-    code_embeddings = model.encode(code_chunks)
-    
-    # Calculate cosine similarities between all code chunks and all licenses
-    if model == 'tf-idf':
-        similarity_matrix = cosine_similarity(code_vectors, license_vectors)
-    elif model == 'bow':
-        similarity_matrix = cosine_similarity(code_vectors, license_vectors)
-    elif model == 'fasttext':
-        similarity_matrix = cosine_similarity(code_embeddings, license_embeddings)
-    else:
-        similarity_matrix = cosine_similarity(code_embeddings, license_embeddings)
-    
-    if embedding_approach == 'file-embedding' and model != 'bow':
-        results = sorted(((index, score, code_chunks[index]) for index, score in enumerate(similarity_matrix)), key=lambda x: x[1], reverse=True)[:top_k]
-    elif embedding_approach  == 'file-embedding' and model == 'bow':
-        print(similarity_matrix.shape)
-        pass
-    elif embedding_approach == 'line-embedding':
-        results = []
-        for i in range(similarity_matrix.shape[0]):
-            max_score_index = np.argmax(similarity_matrix[i]) 
-            max_score = similarity_matrix[i][max_score_index]  
-            results.append((i, max_score, code_chunks[i]))  
-        results.sort(key=lambda x: x[1], reverse=True)
-    elif embedding_approach == 'license-embedding':
-        results = []
-        for i in range(similarity_matrix.shape[0]):  
-            max_score_index = np.argmax(similarity_matrix[i]) 
-            max_score = similarity_matrix[i][max_score_index]  
-            match = re.search(r"\bLicense Name: .*\b", licenses.split('----------------------------------------')[max_score_index])
-            if match: 
-                results.append((i, max_score, code_chunks[i]))
-                                # , match.group(0)))
-            else:
-                results.append((i, max_score, code_chunks[i], 'N/A'))
-        results.sort(key=lambda x: x[1], reverse=True)
-    else:
-        #TODO: add error
-        pass
-
-    return results[:top_k]
-
 def get_top_similar_license_lines(
-    code_text,
-    licenses_file_path,
-    license_embeddings = None,
-    model = SentenceTransformer("all-mpnet-base-v2"),
-    embeddings_dir="extras/license_information/license_embeddings",
-    embedding_approach = 'license-embedding',
-    top_k=5,
-    double_semantic_search = False,
+    code_text: str,
+    licenses_file_path: str,
+    license_embeddings: Optional[np.ndarray] = None,
+    model: SentenceTransformer = SentenceTransformer("all-mpnet-base-v2"),
+    embeddings_dir: str = "extras/license_information/license_embeddings",
+    top_k: int = 5,
+    min_similarity: int = 50,
+    double_semantic_search: bool = False,
 ):
     """
-    Finds the top-k most similar lines in a code file to the entire license text using either TF-IDF or sentence embeddings.
-    
+    Identifies the top-k most similar lines from a given code text to a set of license texts.
+    This function leverages sentence embeddings to compute similarity and can perform an advanced
+    double semantic search if specified.
+
     Args:
-        code_text (str): The text content of the code file or comments (if the file extension is supported by nirjas).
-        licenses_file_path (str): Path to the file containing license texts.
-        embeddings_dir (str, optional): Directory to store/load embeddings. Defaults to "extras/license_information/license_embeddings".
-        license_embeddings (multi-dimensional array of floats, optional): Embeddings of the license texts
-        model: (SentenceTransformer model, optional): model to be used for embedding, defaults to all-mpnet-base-v2
-        threshold (float, optional): Similarity threshold for determining a match. Defaults to 0.8.
+        code_text (str): The text content from a code file, including comments.
+        licenses_file_path (str): Path to the file containing different license texts.
+        license_embeddings (ndarray, optional): Precomputed embeddings of the license texts. If not provided,
+                                                they will be computed and saved.
+        model (SentenceTransformer, optional): The model used for generating embeddings. Defaults to 'all-mpnet-base-v2'.
+        embeddings_dir (str, optional): Directory to store or load embeddings. Defaults to 'extras/license_information/license_embeddings'.
+        top_k (int, optional): The number of top similar entries to return. Defaults to 5.
+        min_similarity (float, optional): Minimum similarity score (0-100) to consider a match. Defaults to 50.
+        double_semantic_search (bool, optional): If True, performs a secondary search for higher accuracy. Defaults to False.
 
     Returns:
-        bool: True if license-like text is found, False otherwise.
+        A list of tuples, each representing a match:
+            - Similarity score (float)
+            - Matched code line (str)
+            - License name (str)
+            - License ID (str)
+            - Best matching license text line (Optional[str], only present if `double_semantic_search` is True)
+            - List of top 5 matching license names with scores (Optional[List[Tuple[str, float]]], only present if `double_semantic_search` is True)
     """
 
+    # Ensure directory for storing embeddings exists
     os.makedirs(embeddings_dir, exist_ok=True)
+
+    # Load license texts from CSV
     licenses = pd.read_csv(licenses_file_path)
 
-    if model != 'fuzzy':
-        model_name = model._first_module().auto_model.config._name_or_path.split('/')[1]
-        embeddings_file_path = os.path.join(embeddings_dir, f"{model.get_sentence_embedding_dimension()}_{model_name.replace('/', '_')}-{embedding_approach}.pkl")
-        if license_embeddings is None:
-            if os.path.exists(embeddings_file_path):
-                # print(f"Loading pre-embedded licenses from: {embeddings_file_path}")
-                with open(embeddings_file_path, "rb") as fIn:
-                    stored_data = pickle.load(fIn)
-                    license_embeddings = stored_data['embeddings']
-            else:
-                print(f"Pre-embedded licenses not found. Creating embeddings and saving to: {embeddings_file_path}")
-                if embedding_approach == 'line-embedding':
-                    text = '\n'.join(licenses['License Text'])
-                    license_embeddings = model.encode(text.split('\n'))
-                elif embedding_approach == 'license-embedding':
-                    license_embeddings = model.encode(licenses['License Text'])
-                else:
-                    raise ValueError("embedding approach not recognized. Supported approaches: ['line-embedding', 'license-embedding']")
-                
-                with open(embeddings_file_path, "wb") as fOut:
-                    pickle.dump({'embeddings': license_embeddings}, fOut, protocol=pickle.HIGHEST_PROTOCOL)
+    # Load/compute license embeddings
+    model_name = model._first_module().auto_model.config._name_or_path.split('/')[1]
+    embeddings_file_path = os.path.join(
+        embeddings_dir, f"{model.get_sentence_embedding_dimension()}_{model_name.replace('/', '_')}-license-embedding.pkl"
+    )
 
-        # Encode code chunks (Sentence Transformers)
-        code_chunks = code_text.split('\n')
-        code_embeddings = model.encode(code_chunks)
-        
-        similarity_matrix = np.zeros((len(code_embeddings), len(license_embeddings)))
+    if license_embeddings is None:
+        if os.path.exists(embeddings_file_path):
+            # Load pre-computed embeddings if available
+            with open(embeddings_file_path, "rb") as fIn:
+                stored_data = pickle.load(fIn)
+                license_embeddings = stored_data['embeddings']
+        else:
+            # Compute and store embeddings if not found
+            print(f"Pre-embedded licenses not found. Creating embeddings and saving to: {embeddings_file_path}")
+            license_embeddings = model.encode(licenses['License Text'])
+            with open(embeddings_file_path, "wb") as fOut:
+                pickle.dump({'embeddings': license_embeddings}, fOut, protocol=pickle.HIGHEST_PROTOCOL)
 
-        for i in range(len(code_embeddings)):
-            embedding = code_embeddings[i].reshape(1, -1)
-            similarity_matrix[i] = cosine_similarity(embedding, license_embeddings)
+    # Clean up special characters from the code text to standardize it for embedding generation
+    chars_to_remove = ['—', '…', '•', '§', '«', '»', '„', '・', '−', '*', '>', '<']
+    for char_to_remove in chars_to_remove:
+        code_text = code_text.replace(char_to_remove, '')
+
+    # Split code into individual lines or chunks
+    code_chunks = code_text.split('\n')
+
+    # Generate embeddings for each line/chunk of code
+    code_embeddings = model.encode(code_chunks)
     
-    else:
-        similarity_matrix = np.zeros((len(code_embeddings), len(license_embeddings)))
-
-        def calculate_similarity(i, code_chunks, licenses):
-            row = np.zeros(len(licenses))
-            for j in range(len(licenses)):
-                row[j] = fuzz.ratio(code_chunks[i], licenses['License Text'].iloc[j])
-            return row
-        
-        with ThreadPoolExecutor() as executor:
-            future_to_row = {executor.submit(calculate_similarity, i, code_chunks, licenses): i for i in range(len(code_embeddings))}
-
-            for future in as_completed(future_to_row):
-                i = future_to_row[future]
-                try:
-                    similarity_matrix[i, :] = future.result()
-                except Exception as exc:
-                    print(f"Row {i} generated an exception: {exc}")
+    # Compute similarity between code embeddings and license embeddings
+    similarity_matrix = np.zeros((len(code_embeddings), len(license_embeddings)))
+    for i in range(len(code_embeddings)):
+        embedding = code_embeddings[i].reshape(1, -1)
+        similarity_matrix[i] = cosine_similarity(embedding, license_embeddings)
     
-    if embedding_approach == 'line-embedding':
-        text = '-----LICENSE_SEPARATOR-----'.join(licenses['License Text'])
-        text = re.split(r'\n+', text)
-        text = text[1::]
-        license_index_map = {}
-        current_license_index = 0 
-        line_counter = 0
-        for line in text:
-            if line.strip() == '-----LICENSE_SEPARATOR-----':
-                license_index_map[line_counter] = current_license_index
-                line_counter += 1
-                current_license_index += 1
-                continue
-            license_index_map[line_counter] = current_license_index
-            line_counter += 1
-        results = []
-        for i in range(similarity_matrix.shape[0]):
-            max_score_index = np.argmax(similarity_matrix[i]) 
-            max_score = similarity_matrix[i][max_score_index]  
+     # Extract and sort results based on similarity scores
+    results = []
+    for i in range(len(code_embeddings)):  
+        max_score_index = np.argmax(similarity_matrix[i])
+        max_score = similarity_matrix[i][max_score_index]
+        results.append(
+            (
+                i,
+                max_score,
+                code_chunks[i],
+                licenses.loc[max_score_index, 'License Name'],
+                licenses.loc[max_score_index, 'License ID'],
+            )
+        )
+    results.sort(key=lambda x: x[1], reverse=True)
 
-            license_index = license_index_map[max_score_index]
-
-            results.append((i, max_score, code_chunks[i], licenses.loc[license_index, 'License Name'], licenses.loc[license_index, 'License ID']))  
-        results.sort(key=lambda x: x[1], reverse=True)
-    elif embedding_approach == 'license-embedding':
-        results = []
-        for i in range(len(code_embeddings)):  
-            max_score_index = np.argmax(similarity_matrix[i])
-            max_score = similarity_matrix[i][max_score_index]
-            results.append((i, max_score, code_chunks[i], licenses.loc[max_score_index, 'License Name'], licenses.loc[max_score_index, 'License ID']))
-        results.sort(key=lambda x: x[1], reverse=True)
-    else:
-        raise ValueError("embedding approach not recognized. Supported approaches: ['line-embedding', 'license-embedding']")
-
+    # Select the top-k results
     top_tuples = results[:top_k]
 
-    if double_semantic_search and (embedding_approach != 'line-embedding'):
-        text = '\n'.join(licenses['License Text'])
+    if double_semantic_search:
+        # Map each license text line/chunk (both for enhanced semantic search) to its correct index in the dataset
         license_index_map = {}
-        line_idx = 0
-        for license_index, license in enumerate(licenses['License Text']):
-            for line in license.split('\n'):
-                license_index_map[line_idx] = license_index
-                line_idx += 1  
-        similarity_matrix = np.zeros((len(top_tuples), len(text.split('\n'))))
+        all_license_texts = []
+
+        # Extract all license texts (lines/chunks) from each license text in the dataset
+        for license_index, license_text in enumerate(licenses['License Text']):
+            # List of all connect consecutive lines for chunking. (This is also done with file comments)
+            current_license_text = []  
+            for line in license_text.split('\n'):
+                # For each line, append it 
+                all_license_texts.append(line)
+                license_index_map[len(all_license_texts) - 1] = license_index
+                # If this is an empty line, append all consecutive lines already saved in the current_license_text
+                # together to the list of license texts
+                if len(line) < 4:
+                    if current_license_text:
+                        all_license_texts.append(''.join(current_license_text))
+                        license_index_map[len(all_license_texts) - 1] = license_index
+                        current_license_text = []
+                else:
+                    # If not an empty line, most be connected to lines already in the current_license_text list
+                    # Append that line 
+                    current_license_text.append(line)
+            # In the end, append any left over lines.
+            if current_license_text:
+                all_license_texts.append(''.join(current_license_text))
+                license_index_map[len(all_license_texts) - 1] = license_index
+
+        # Second level semantic search matching the top chunks to their most similar license
+        # This is what actually matches a line/chunk to its probable license, the first layer is 
+        # mainly used to get the top_k lines themselves but is not good at matching a chunk to its original 
+        # license
+        similarity_matrix = np.zeros((len(top_tuples), len(all_license_texts)))
         for index, tuple in enumerate(top_tuples):
             code_text = tuple[2]
-            text_lines = text.split('\n')
-            for i in range(len(text_lines)):
-                similarity_matrix[index][i] = fuzz.ratio(code_text, text_lines[i]) 
+            
+            # Perform similarity matching using fuzzywuzzy which uses Levenshtein distance
+            for i in range(len(all_license_texts)):
+                similarity_matrix[index][i] = fuzz.ratio(code_text, all_license_texts[i]) 
+            
+            # Extract the top 5 licenses matches to this chunk
             max_score_index = np.argmax(similarity_matrix[index]) 
+            top_5_indices = np.argsort(similarity_matrix[index])[-5:][::-1]
             license_index = license_index_map[max_score_index]
-            top_tuples[index] = (tuple[2], licenses.loc[license_index, 'License Name'], licenses.loc[license_index, 'License ID']) 
+            top_tuples[index] = (
+                                    similarity_matrix[index][max_score_index], 
+                                    tuple[2], licenses.loc[license_index, 'License Name'],
+                                    licenses.loc[license_index, 'License ID'],
+                                    all_license_texts[max_score_index],
+                                    [
+                                        (
+                                            licenses.loc[license_index_map[idx], 'License Name'],
+                                            similarity_matrix[index][idx]
+                                        ) 
+                                        for idx in top_5_indices
+                                    ]
+                                ) 
 
-    return top_tuples
+    # Additional logic for merging potentially related code texts
+    # This process attempts to merge code texts identified as similar to enhance similarity detection
+    # Mainly used for differentiating between very similar tricky licenses (e.g. ISC, 0BSD, MIT variants, etc.)
+    for merge_combo in combinations(top_tuples, 2):
+        tuple1, tuple2 = merge_combo
+        code_text1, code_text2 = tuple1[1], tuple2[1]
+
+        # Create merged versions of the code texts
+        # This tries both possible orders of merging to see if one order yields a higher similarity score
+        merged_code_text12 = f"{code_text1}\n{code_text2}"
+        merged_code_text21 = f"{code_text2}\n{code_text1}"
+
+        # Analyze each merged code text against all licenses to determine if the merge improves the similarity
+        for merged_code_text in [merged_code_text12, merged_code_text21]:
+            
+            # Compute similarity scores for the merged code text against each license text
+            similarity_scores = np.zeros(len(licenses))
+            for i, lic_text in enumerate(licenses['License Text']):
+                similarity_scores[i] = fuzz.ratio(merged_code_text, lic_text)
+
+            # Identify the maximum similarity score and corresponding license from the scores calculated
+            max_index = np.argmax(similarity_scores)
+            new_score = similarity_scores[max_index]
+            top_5_indices = np.argsort(similarity_scores[index])[-5:][::-1]
+
+            # If the new score meets the minimum similarity threshold, consider this merged code text as a valid potential match
+            if new_score >= min_similarity:
+                top_tuples.append(
+                    (
+                        new_score,
+                        merged_code_text, 
+                        licenses.loc[max_index, 'License Name'],
+                        licenses.loc[max_index, 'License ID'],
+                        [
+                            (
+                                licenses.loc[license_index_map[idx], 'License Name'],
+                                similarity_scores[idx]
+                            )
+                            for idx in top_5_indices
+                        ],
+                    )
+                )
+
+    # Filter out results that do not meet the minimum similarity threshold before returning
+    filtered_results = [result for result in top_tuples if result[0] >= min_similarity]
+
+    return filtered_results
 
 def extract_comments(df: pd.DataFrame):
         for index, row in df.iterrows():
             try: 
                 nirjas_comments = nirjas.extract(os.path.join('extras', row['file path']))
-                
                 all_comments = []
                 
-                for key, values in nirjas_comments.items():
-                    if "comment" in key:
-                        if isinstance(values, list):
-                            for entry in values:
-                                all_comments.append(entry["comment"])
+                with open(os.path.join('extras', row['file path']), "r") as f:
+                    all_lines = f.readlines()
+                
+                for single_line_comment in nirjas_comments['single_line_comment']:
+                    all_comments.append(single_line_comment['comment'])
+                for cont_single_line_comment in nirjas_comments['cont_single_line_comment']:
+                    start = cont_single_line_comment['start_line'] - 1
+                    end = cont_single_line_comment['end_line']
+                    for line_idx in range(start, end):
+                        comment = all_lines[line_idx].strip('\n').strip()
+                        all_comments.append(comment)
+                for multi_line_comment in nirjas_comments['multi_line_comment']:
+                    start = multi_line_comment['start_line'] - 1
+                    end = multi_line_comment['end_line']
+                    current_comment = []  
+                    for line_idx in range(start, end):
+                        line = all_lines[line_idx].strip('\n').strip()
+                        all_comments.append(line) 
+                        if len(line) < 4:
+                            if current_comment:
+                                all_comments.append(''.join(current_comment))
+                                current_comment = []
                         else:
-                            all_comments.append(values)
-
+                            current_comment.append(line)
+                    if current_comment:
+                        all_comments.append(''.join(current_comment))
                 comments = "\n".join(all_comments)
             except:
                 with open(os.path.join('extras', row['file path']), "r") as f:
@@ -520,7 +410,7 @@ def predicted_license_found(license_ids, labels):
     for label in labels:
         for license_id in license_ids:
             similarity_ratio = fuzz.ratio(label, license_id)  
-            if similarity_ratio >= 40:
+            if (similarity_ratio >= 35) or label in license_id:
                 return 1
     return 0
 
