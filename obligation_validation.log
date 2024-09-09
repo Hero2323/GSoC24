@@ -1,0 +1,29 @@
+2024-08-01 10:11:07.585 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 0
+2024-08-01 10:11:15.812 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 5
+2024-08-01 10:11:34.641 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 10
+2024-08-01 10:12:17.309 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 15
+2024-08-01 10:12:28.585 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 20
+2024-08-01 10:13:11.470 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 25
+2024-08-01 10:13:35.540 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 30
+2024-08-01 10:13:56.177 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 35
+2024-08-01 10:14:24.541 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 40
+2024-08-01 10:16:29.779 | ERROR    | helpers.llm_client:process_dataset_obligations:323 - Unhandled exception at index: 43, Exception: Error code: 400 - {'error': {'message': 'Please reduce the length of the messages or completion.', 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2024-08-01 10:16:30.962 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 45
+2024-08-01 10:16:48.007 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 50
+2024-08-01 10:16:52.005 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 55
+2024-08-01 10:16:59.822 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 60
+2024-08-01 10:19:14.688 | ERROR    | helpers.llm_client:process_dataset_obligations:323 - Unhandled exception at index: 60, Exception: Error code: 400 - {'error': {'message': 'Please reduce the length of the messages or completion.', 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2024-08-01 10:19:21.053 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 65
+2024-08-01 10:19:27.554 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 70
+2024-08-01 10:19:35.437 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 75
+2024-08-01 10:19:55.763 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 80
+2024-08-01 10:23:13.770 | ERROR    | helpers.llm_client:process_dataset_obligations:323 - Unhandled exception at index: 84, Exception: Error code: 400 - {'error': {'message': 'Please reduce the length of the messages or completion.', 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2024-08-01 10:23:13.779 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 85
+2024-08-01 10:23:20.673 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 90
+2024-08-01 10:24:57.810 | ERROR    | helpers.llm_client:process_dataset_obligations:323 - Unhandled exception at index: 92, Exception: Error code: 400 - {'error': {'message': 'Please reduce the length of the messages or completion.', 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2024-08-01 10:26:04.142 | ERROR    | helpers.llm_client:process_dataset_obligations:323 - Unhandled exception at index: 93, Exception: Error code: 400 - {'error': {'message': 'Please reduce the length of the messages or completion.', 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2024-08-01 10:26:05.415 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 95
+2024-08-01 10:26:12.592 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 100
+2024-08-01 10:27:35.739 | ERROR    | helpers.llm_client:process_dataset_obligations:323 - Unhandled exception at index: 103, Exception: Error code: 400 - {'error': {'message': 'Please reduce the length of the messages or completion.', 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+2024-08-01 10:27:36.782 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 105
+2024-08-01 10:27:42.897 | INFO     | helpers.llm_client:process_dataset_obligations:319 - Processing index: 110

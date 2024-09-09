@@ -14,6 +14,7 @@ from helpers.functions import get_top_similar_license_lines
 import nirjas
 import pickle
 from sentence_transformers import SentenceTransformer, util
+import tiktoken
 
 class LLMClient():
     """
@@ -35,14 +36,24 @@ class LLMClient():
         
         # Groq Doesn't support dynamic models (as far as I'm aware?) you have to provide model in the ChatGroq function
         # So I'll create separate clients for each GroqModel
-        self.lamma3_8b_client = ChatGroq(
+        self.llama3_8b_client = ChatGroq(
             groq_api_key = os.getenv('GROQ_API_KEY'),
             model =  Models.LLAMA_3_8b.value
+        )
+
+        self.llama3_1_8b_client = ChatGroq(
+            groq_api_key = os.getenv('GROQ_API_KEY'),
+            model =  Models.LLAMA_3_1_8b.value
         )
 
         self.gemma_7b_client = ChatGroq(
             groq_api_key = os.getenv('GROQ_API_KEY'),
             model = Models.GEMMA_7b.value 
+        )
+
+        self.gemma_2_9b_client = ChatGroq(
+            groq_api_key = os.getenv('GROQ_API_KEY'),
+            model = Models.GEMMA_2_9b.value 
         )
 
         self.nvidiaClient = OpenAI(
@@ -70,12 +81,13 @@ class LLMClient():
         Returns:
             The rate limit as an integer.
         """
-        if model.name in [Models.LLAMA_3_8b.name, Models.GEMMA_7b.name]:
+        if model.name in [Models.LLAMA_3_8b.name, Models.GEMMA_7b.name, 
+                          Models.LLAMA_3_1_8b.name, Models.GEMMA_2_9b.name]:
             return 28
-        elif model.name in [Models.MISTRAL_7b.name]:
+        elif model.name in [Models.MISTRAL_7b.name, Models.TOGETHER_GEMMA_2_9b.name]:
             return 58
         elif model.name in [Models.PHI_3_MINI.name, Models.PHI_3_SMALL.name,
-                            Models.PHI_3_MEDIUM.name, Models.GEMMA_2_9b.name]:
+                            Models.PHI_3_MEDIUM.name]:
             return 55
         else:
             raise Exception(f'Unrecognized model: {model.name}')
@@ -119,18 +131,28 @@ class LLMClient():
 
         rate_limit = self._get_rate_limit(model)
 
-        @retry(reraise=True, wait=wait_random_exponential(min=60, max=120), stop=stop_after_attempt(5))
+        # @retry(reraise=True, wait=wait_random_exponential(min=60, max=120), stop=stop_after_attempt(5))
         @limits(calls=rate_limit, period=60)
         def _internal_func():
             if model.name == Models.LLAMA_3_8b.name:
-                self.lamma3_8b_client.temperature = temperature
-                response = self.lamma3_8b_client.invoke(prompt).content
+                self.llama3_8b_client.temperature = temperature
+                response = self.llama3_8b_client.invoke(prompt).content
+            elif model.name == Models.LLAMA_3_1_8b.name:
+                self.llama3_1_8b_client.temperature = temperature
+                response = self.llama3_1_8b_client.invoke(prompt).content
             elif model.name == Models.GEMMA_7b.name:
                 self.gemma_7b_client.temperature = temperature
                 response = self.gemma_7b_client.invoke(prompt).content
-            elif model.name == Models.MISTRAL_7b.name:
+            elif model.name == Models.GEMMA_2_9b.name:
+                self.gemma_2_9b_client.temperature = temperature
+                response = self.gemma_2_9b_client.invoke(prompt).content
+            elif model.name in [Models.MISTRAL_7b.name, Models.TOGETHER_GEMMA_2_9b.name]:
+                encoding = "cl100k_base"
+                tokenizer = tiktoken.get_encoding(encoding)
+                if len(tokenizer.encode(prompt)) >= 7500:
+                    raise Exception(f'Prompt Length >= 7500, skipping')
                 chat_completion = self.togetherClient.chat.completions.create(
-                    model=Models.MISTRAL_7b.value,
+                    model=model.value,
                     messages=[
                         {'role': 'user', 'content': prompt}
                     ],
@@ -139,7 +161,7 @@ class LLMClient():
                 )
                 response = chat_completion.choices[0].message.content
             elif model.name in [Models.PHI_3_MINI.name, Models.PHI_3_SMALL.name,
-                                Models.PHI_3_MEDIUM.name, Models.GEMMA_2_9b.name]:
+                                Models.PHI_3_MEDIUM.name]:
                 chat_completion = self.nvidiaClient.chat.completions.create(
                     model=model.value,
                     messages=[
@@ -284,6 +306,95 @@ class LLMClient():
             output_name = df_path.split('.csv')[0] + f'-{modelName}.csv'
             df.to_csv(os.path.join(output_path, output_name))
             shutil.copyfile(''+self.error_log_file_name, f'{output_name}.log')
+        
+        open(''+self.error_log_file_name, 'w').close()
+
+        df_remaining = df.copy()
+        df_remaining = df_remaining[df_remaining['response'].notna()]
+
+        # for index, row in df_remaining.iterrows():
+        #     df_remaining.loc[index, 'response_parsed'] = parser(row['response'])
+
+        # #calculate metrics & confusion matrix
+
+        # report, matrix = calculate_metrics(dataset,
+        #     response_converted= df_remaining['response_converted'], ground_truth=df_remaining['label'], gt_uncleaned=df['label'])
+
+        return df
+    
+
+    def process_dataset_obligations(self, df : pd.DataFrame, model : Models, prompt_function,
+                        output_name:  str, temperature : float = 0, log_every : int = 0,
+                        retry_fails : bool = True):
+        for index, row in df.iterrows():
+            prompt = prompt_function(row['License Text'], row['Obligations'])
+            if log_every > 0:
+                if index % log_every == 0:
+                    self.logger.info(f"Processing index: {index}")  
+            try:
+                df.loc[index, 'response'] = self._infer(model, prompt, temperature)
+            except Exception as e:
+                self.logger.error(f"Unhandled exception at index: {index}, Exception: {e}")
+        
+        error_indices = df[df['response'].isna()].index
+        
+        if retry_fails:
+            idx = 0
+            while len(error_indices) != 0:
+                idx += 1
+                if idx == 5:
+                    break
+                for index in error_indices:
+                    prompt = prompt_function(df.loc[index, 'License Text'], df.loc[index, 'Obligations'])
+                    for attempt in range(5):
+                        try:
+                            df.loc[index, 'response'] = self._infer(model, prompt, temperature)
+                            self.logger.debug(f"Exception at index: {index} was retried successfully")
+                            break
+                        except:
+                            time.sleep(0.5)
+
+        df.to_csv(os.path.join('results', f'{output_name}.csv'))
+
+        shutil.copyfile(''+self.error_log_file_name, f'{output_name}.log')
+        
+        open(''+self.error_log_file_name, 'w').close()
+
+        return df
+    
+    def process_dataset_license_relevant_chunks(self, df : pd.DataFrame, model : Models, prompt_function,
+                        output_name:  str, extra_file_path='extras', output_path='results',
+                        temperature : float = 0, log_every : int = 0, retry_fails : bool = True):
+        from helpers.functions import extract_comments
+        df = extract_comments(df)
+        for index, row in df.iterrows():
+            prompt = prompt_function(row['file_comments'], row['comments_extracted'])
+            if log_every > 0:
+                if index % log_every == 0:
+                    self.logger.info(f"Processing index: {index}")  
+            try:
+                df.loc[index, 'response'] = self._infer(model, prompt, temperature)
+            except Exception as e:
+                self.logger.error(f"Unhandled exception at index: {index}, Exception: {e}")
+        
+        error_indices = df[df['response'].isna()].index
+        if retry_fails:
+            idx = 0
+            while len(error_indices) != 0:
+                idx += 1
+                if idx == 5:
+                    break
+                for index in error_indices:
+                    prompt = prompt_function(df.loc[index, 'file_comments'], df.loc[index, 'comments_extracted'])
+                    for attempt in range(5):
+                        try:
+                            df.loc[index, 'response'] = self._infer(model, prompt, temperature)
+                            self.logger.debug(f"Exception at index: {index} was retried successfully")
+                            break
+                        except:
+                            time.sleep(0.5)
+        df.to_csv(os.path.join(output_path, f'{output_name}.csv'))
+        shutil.copyfile(''+self.error_log_file_name, f'{output_name}.log')
         
         open(''+self.error_log_file_name, 'w').close()
 

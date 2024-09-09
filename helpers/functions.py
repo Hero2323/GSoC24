@@ -198,10 +198,10 @@ def get_top_similar_license_lines(
                 licenses.loc[max_score_index, 'License ID'],
             )
         )
-    results.sort(key=lambda x: x[1], reverse=True)
+    # results.sort(key=lambda x: x[1], reverse=True)
 
     # Select the top-k results
-    top_tuples = results[:top_k]
+    top_tuples = results#[:top_k]
 
     if double_semantic_search:
         # Map each license text line/chunk (both for enhanced semantic search) to its correct index in the dataset
@@ -265,106 +265,96 @@ def get_top_similar_license_lines(
     # Additional logic for merging potentially related code texts
     # This process attempts to merge code texts identified as similar to enhance similarity detection
     # Mainly used for differentiating between very similar tricky licenses (e.g. ISC, 0BSD, MIT variants, etc.)
-    for merge_combo in combinations(top_tuples, 2):
-        tuple1, tuple2 = merge_combo
-        code_text1, code_text2 = tuple1[1], tuple2[1]
+    # for merge_combo in combinations(top_tuples, 2):
+    #     tuple1, tuple2 = merge_combo
+    #     code_text1, code_text2 = tuple1[1], tuple2[1]
 
-        # Create merged versions of the code texts
-        # This tries both possible orders of merging to see if one order yields a higher similarity score
-        merged_code_text12 = f"{code_text1}\n{code_text2}"
-        merged_code_text21 = f"{code_text2}\n{code_text1}"
+    #     # Create merged versions of the code texts
+    #     # This tries both possible orders of merging to see if one order yields a higher similarity score
+    #     merged_code_text12 = f"{code_text1}\n{code_text2}"
+    #     merged_code_text21 = f"{code_text2}\n{code_text1}"
 
-        # Analyze each merged code text against all licenses to determine if the merge improves the similarity
-        for merged_code_text in [merged_code_text12, merged_code_text21]:
+    #     # Analyze each merged code text against all licenses to determine if the merge improves the similarity
+    #     for merged_code_text in [merged_code_text12, merged_code_text21]:
             
-            # Compute similarity scores for the merged code text against each license text
-            similarity_scores = np.zeros(len(licenses))
-            for i, lic_text in enumerate(licenses['License Text']):
-                similarity_scores[i] = fuzz.ratio(merged_code_text, lic_text)
+    #         # Compute similarity scores for the merged code text against each license text
+    #         similarity_scores = np.zeros(len(licenses))
+    #         for i, lic_text in enumerate(licenses['License Text']):
+    #             similarity_scores[i] = fuzz.ratio(merged_code_text, lic_text)
 
-            # Identify the maximum similarity score and corresponding license from the scores calculated
-            max_index = np.argmax(similarity_scores)
-            new_score = similarity_scores[max_index]
-            top_5_indices = np.argsort(similarity_scores[index])[-5:][::-1]
+    #         # Identify the maximum similarity score and corresponding license from the scores calculated
+    #         max_index = np.argmax(similarity_scores)
+    #         new_score = similarity_scores[max_index]
+    #         top_5_indices = np.argsort(similarity_scores[index])[-5:][::-1]
 
-            # If the new score meets the minimum similarity threshold, consider this merged code text as a valid potential match
-            if new_score >= min_similarity:
-                top_tuples.append(
-                    (
-                        new_score,
-                        merged_code_text, 
-                        licenses.loc[max_index, 'License Name'],
-                        licenses.loc[max_index, 'License ID'],
-                        [
-                            (
-                                licenses.loc[license_index_map[idx], 'License Name'],
-                                similarity_scores[idx]
-                            )
-                            for idx in top_5_indices
-                        ],
-                    )
-                )
+    #         # If the new score meets the minimum similarity threshold, consider this merged code text as a valid potential match
+    #         if new_score >= min_similarity:
+    #             top_tuples.append(
+    #                 (
+    #                     new_score,
+    #                     merged_code_text, 
+    #                     licenses.loc[max_index, 'License Name'],
+    #                     licenses.loc[max_index, 'License ID'],
+    #                     [
+    #                         (
+    #                             licenses.loc[license_index_map[idx], 'License Name'],
+    #                             similarity_scores[idx]
+    #                         )
+    #                         for idx in top_5_indices
+    #                     ],
+    #                 )
+    #             )
 
     # Filter out results that do not meet the minimum similarity threshold before returning
-    filtered_results = [result for result in top_tuples if result[0] >= min_similarity]
+    # top_tuples.sort(key=lambda x: len(x[1]), reverse=True)
+    
+    # filtered_results = [result for result in top_tuples if result[0] >= min_similarity]
 
-    return filtered_results
+    return top_tuples
 
 def extract_comments(df: pd.DataFrame):
         for index, row in df.iterrows():
+            comments_extracted = False
             try: 
                 nirjas_comments = nirjas.extract(os.path.join('extras', row['file path']))
+                if nirjas_comments.total_lines_of_comments == 0:
+                    raise Exception() # Go to the except case to read all the file, even if it has no comments
                 all_comments = []
-                
                 with open(os.path.join('extras', row['file path']), "r") as f:
                     all_lines = f.readlines()
-                
                 for single_line_comment in nirjas_comments['single_line_comment']:
                     all_comments.append(single_line_comment['comment'])
                 for cont_single_line_comment in nirjas_comments['cont_single_line_comment']:
                     start = cont_single_line_comment['start_line'] - 1
                     end = cont_single_line_comment['end_line']
                     for line_idx in range(start, end):
-                        comment = all_lines[line_idx].strip('\n').strip()
+                        # comment = all_lines[line_idx].strip('\n').strip()
+                        comment = all_lines[line_idx]
                         all_comments.append(comment)
                 for multi_line_comment in nirjas_comments['multi_line_comment']:
                     start = multi_line_comment['start_line'] - 1
                     end = multi_line_comment['end_line']
-                    current_comment = []  
+                    # current_comment = []  
                     for line_idx in range(start, end):
-                        line = all_lines[line_idx].strip('\n').strip()
+                        # line = all_lines[line_idx].strip('\n').strip()
+                        line = all_lines[line_idx]
                         all_comments.append(line) 
-                        if len(line) < 4:
-                            if current_comment:
-                                all_comments.append(''.join(current_comment))
-                                current_comment = []
-                        else:
-                            current_comment.append(line)
-                    if current_comment:
-                        all_comments.append(''.join(current_comment))
-                comments = "\n".join(all_comments)
+                        # if len(line) < 4:
+                            # if current_comment:
+                                # all_comments.append(''.join(current_comment))
+                                # current_comment = []
+                        # else:
+                            # current_comment.append(line)
+                    # if current_comment:
+                    #     all_comments.append(''.join(current_comment))
+                # comments = "\n".join(all_comments)
+                comments = "".join(all_comments)
+                comments_extracted = True
             except:
                 with open(os.path.join('extras', row['file path']), "r") as f:
                     comments = f.read()
-                    # # Group paragraphs together, handling connected lines and preserving indentation
-                    # grouped_comments = ""
-                    # current_paragraph = []
-
-                    # for line in comments.splitlines():
-                    #     if line.strip():  # Non-empty line (part of a paragraph)
-                    #         current_paragraph.append(line)
-                    #     else:  # Empty line (end of paragraph)
-                    #         if current_paragraph:
-                    #             grouped_comments += " ".join(current_paragraph) + "\n\n"  # Combine with space if needed
-                    #             current_paragraph = []
-
-                    # # Handle last paragraph (if it doesn't end with an empty line)
-                    # if current_paragraph:
-                    #     grouped_comments += " ".join(current_paragraph) + "\n"  # No extra newline at the end 
-
-                    # # Optional: further clean-up
-                    # comments = re.sub(r"\n{3,}", "\n\n", grouped_comments) # Remove excess blank lines
             df.loc[index, 'file_comments'] = comments
+            df.loc[index, 'comments_extracted'] = comments_extracted
         return df
 
 def license_line_found(top_k_lines, relevant_lines):
